@@ -1,9 +1,9 @@
 # app/core/predict.py
 import torch
 import torch.nn.functional as F
+import io
 from torchvision import models, transforms
 from PIL import Image
-import io
 from .config import DISEASE_CLASSES # config.py에서 상세 정보 가져오기
 
 # --- 1. 작물별 모델 및 설정 정보 ---
