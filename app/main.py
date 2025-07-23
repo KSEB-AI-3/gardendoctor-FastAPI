@@ -4,13 +4,13 @@ from sqlalchemy.orm import Session
 import requests
 from io import BytesIO
 from PIL import Image
-
 # --- 데이터베이스 및 모델 관련 임포트 추가 ---
 from . import database, models
 from .core.predict import predict_disease
-
 # Pydantic 모델
 from .models import DiagnosisResult, ErrorResponse, AnalysisRequest, FeedbackRequest, SuccessResponse
+# --- ✨ 유효성 검사 함수 임포트 ✨ ---
+from .core.validation import validate_image_content
 
 # --- 앱 시작 시 데이터베이스 테이블 생성 ---
 database.create_db_and_tables()
@@ -18,7 +18,7 @@ database.create_db_and_tables()
 app = FastAPI(
     title="작물별 질병 진단 API (피드백 기능 추가)",
     description="사용자가 선택한 작물에 맞는 AI 모델을 사용하여 질병을 진단하고, 사용자는 결과에 대한 피드백을 제출할 수 있습니다.",
-    version="3.1.0"
+    version="4.0.0"
 )
 
 # --- 데이터베이스 세션을 얻기 위한 Dependency ---
@@ -49,6 +49,15 @@ async def diagnose_crop(
         raise HTTPException(status_code=400, detail="이미지 파일만 업로드할 수 있습니다.")
 
     image_bytes = await file.read()
+    
+    # --- ✨ 1. 이미지 내용 유효성 검사 ✨ ---
+    is_valid, message = validate_image_content(image_bytes)
+    if not is_valid:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{message} 분석할 수 있는 다른 사진을 업로드해주세요."
+        )
+        
     disease_info, confidence, error = predict_disease(crop_name, image_bytes)
 
     if error:
@@ -96,6 +105,14 @@ async def diagnose_by_url(
         Image.open(BytesIO(image_bytes)).verify()
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"이미지 URL 처리 중 오류 발생: {e}")
+
+    # --- ✨ 1. 이미지 내용 유효성 검사 ✨ ---
+    is_valid, message = validate_image_content(image_bytes)
+    if not is_valid:
+        raise HTTPException(
+            status_code=400,
+            detail=f"{message} 분석할 수 있는 다른 사진을 업로드해주세요."
+        )
 
     disease_info, confidence, error = predict_disease(crop_name, image_bytes)
 
