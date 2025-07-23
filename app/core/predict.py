@@ -10,6 +10,18 @@ from .config import DISEASE_CLASSES # config.py에서 상세 정보 가져오기
 # 각 작물에 대한 모델 경로와 학습 시 사용한 클래스 이름을 정의합니다.
 # 이 정보는 앱에서 호출하는 crop_name과 일치해야 합니다.
 MODEL_CONFIG = {
+    "tomato": {
+        "model_path": r"app\ai_models\new_tomato_classifier_ver2.pth", 
+        "class_names": ['정상', '토마토잎곰팡이병', '토마토황화잎말림바이러스병', '토마토흰가루병'] 
+    },
+    "strawberry": {
+        "model_path": r"app\ai_models\no_powdery_leaf_strawberry_classifier.pth", 
+        "class_names": ['딸기꽃곰팡이병', '딸기모무늬병', '딸기열매흰가루병', '딸기잎마름병', '딸기잿빛곰팡이병', '딸기탄저병', '정상'] # 참외 모델 학습 시 클래스 순서
+    },
+    "pepper": {
+        "model_path": r"app\ai_models\pepper_classifier_ver1.pth", 
+        "class_names": ['고추탄저병', '고추흰가루병', '정상'] 
+    },
     "pumpkin": {
         "model_path": r"app\ai_models\best_pumpkin_classifier_811.pth",
         "class_names": ['단호박점무늬병', '단호박흰가루병', '정상'] # 학습 순서와 반드시 일치해야 함
@@ -17,14 +29,6 @@ MODEL_CONFIG = {
     "k_melon": {
         "model_path": r"app\ai_models\best_k_melon_classifier_811.pth", # 참외 모델 경로 (예시)
         "class_names": ['정상', '참외노균병', '참외흰가루병'] # 참외 모델 학습 시 클래스 순서
-    },
-    "tomato": {
-        "model_path": r"app\ai_models\new_tomato_classifier_ver2.pth", # 참외 모델 경로 (예시)
-        "class_names": ['정상', '토마토잎곰팡이병', '토마토황화잎말림바이러스병', '토마토흰가루병'] 
-    },
-    "strawberry": {
-        "model_path": r"app\ai_models\no_powdery_leaf_strawberry_classifier.pth", # 참외 모델 경로 (예시)
-        "class_names": ['딸기꽃곰팡이병', '딸기모무늬병', '딸기열매흰가루병', '딸기잎마름병', '딸기잿빛곰팡이병', '딸기탄저병', '정상'] # 참외 모델 학습 시 클래스 순서
     },
     
     # 여기에 새로운 작물 모델 정보를 계속 추가할 수 있습니다.
